@@ -1,5 +1,6 @@
 import pytest
-from flaskr.db import get_db
+from flask import g
+from flaskr.models import User, Post
 
 
 def test_index(client, auth):
@@ -27,10 +28,9 @@ def test_login_required(client, path):
 
 
 def test_author_required(app, client, auth):
-    with app.app_context():
-        db = get_db()
-        db.execute('UPDATE post SET author_id = 2 WHERE id = 1')
-        db.commit()
+    with client:
+        client.get('/')
+        g.session.query(Post).filter_by(id=1).first().author_id = 2
 
     auth.login()
     assert client.post('/1/update').status_code == 403
@@ -52,10 +52,9 @@ def test_create(client, auth, app):
     assert client.get('/create').status_code == 200
     client.post('/create', data={'title': 'created', 'body': ''})
 
-    with app.app_context():
-        db = get_db()
-        count = db.execute('SELECT COUNT(id) FROM post').fetchone()[0]
-        assert count == 2
+    with client:
+        client.get('/')
+        assert g.session.query(Post.id).count() == 2
 
 
 def test_update(client, auth, app):
@@ -63,10 +62,9 @@ def test_update(client, auth, app):
     assert client.get('/1/update').status_code == 200
     client.post('/1/update', data={'title': 'updated', 'body': ''})
 
-    with app.app_context():
-        db = get_db()
-        post = db.execute('SELECT * FROM post WHERE id = 1').fetchone()
-        assert post['title'] == 'updated'
+    with client:
+        client.get('/')
+        assert g.session.query(Post).filter_by(id=1).first().title == 'updated'
 
 
 @pytest.mark.parametrize('path', (
@@ -84,8 +82,6 @@ def test_delete(client, auth, app):
     response = client.post('/1/delete')
     assert response.headers['Location'] == 'http://localhost/'
 
-    with app.app_context():
-        db = get_db()
-        post = db.execute('SELECT * FROM post WHERE id = 1').fetchone()
-        assert post is None
-
+    with client:
+        client.get('/')
+        assert not g.session.query(Post).filter_by(id=1).first()
