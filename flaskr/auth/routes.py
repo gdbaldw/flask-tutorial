@@ -1,8 +1,9 @@
 from flask import (
-    flash, g, redirect, render_template, request, session, url_for
+    flash, g, redirect, render_template, request, url_for, abort
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import login_user, logout_user, login_required
+from is_safe_url import is_safe_url
 
 from . import bp
 
@@ -52,7 +53,10 @@ def login():
 
         if not error:
             login_user(user)
-            return redirect(url_for('index'))
+            url = request.args.get('next', url_for('index'))
+            if not is_safe_url(url, allowed_hosts={''}):
+                return abort(400)
+            return redirect(url)
 
         flash(error)
 

@@ -50,20 +50,18 @@ def test_exists_required(client, auth, path):
 def test_create(client, auth, app):
     auth.login()
     assert client.get('/create').status_code == 200
-    client.post('/create', data={'title': 'created', 'body': ''})
 
     with client:
-        client.get('/')
+        client.post('/create', data={'title': 'created', 'body': ''})
         assert g.session.query(Post.id).count() == 2
 
 
 def test_update(client, auth, app):
     auth.login()
     assert client.get('/1/update').status_code == 200
-    client.post('/1/update', data={'title': 'updated', 'body': ''})
 
     with client:
-        client.get('/')
+        client.post('/1/update', data={'title': 'updated', 'body': ''})
         assert g.session.query(Post).filter_by(id=1).first().title == 'updated'
 
 
@@ -79,9 +77,8 @@ def test_create_update_validate(client, auth, path):
 
 def test_delete(client, auth, app):
     auth.login()
-    response = client.post('/1/delete')
-    assert response.headers['Location'] == 'http://localhost/'
 
     with client:
-        client.get('/')
+        response = client.post('/1/delete')
         assert not g.session.query(Post).filter_by(id=1).first()
+    assert response.headers['Location'] == 'http://localhost/'

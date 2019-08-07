@@ -1,18 +1,17 @@
 import pytest
-from flask import g, session
+from flask import g
 from flaskr.models import User
 from flask_login import current_user
 
-def test_register(client, app):
+def test_register(client):
     assert client.get('/auth/register').status_code == 200
-    response = client.post(
-        'auth/register', data={'username': 'a', 'password': 'a'}
-    )
-    assert 'http://localhost/auth/login' == response.headers['Location']
-
     with client:
-        client.get('/')
+        response = client.post(
+            'auth/register',
+            data={'username': 'a', 'password': 'a'}
+        )
         assert g.session.query(User).filter_by(username = 'a').first()
+    assert 'http://localhost/auth/login' == response.headers['Location']
 
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
@@ -28,17 +27,13 @@ def test_register_validate_input(client, username, password, message):
     assert message in response.data
 
 
-
 def test_login(client, auth):
     assert client.get('/auth/login').status_code == 200
-    response = auth.login()
-    assert response.headers['Location'] == 'http://localhost/'
-    
     with client:
-        client.get('/')
-        assert session['user_id'] == '1'
+        response = auth.login()
         assert current_user.username == 'test'
-
+    assert 'http://localhost/' == response.headers['Location']
+    
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
     ('a', 'test', b'Incorrect username.'),
@@ -50,8 +45,16 @@ def test_login_validate_input(auth, username, password, message):
 
 
 def test_logout(client, auth):
-    auth.login()
-
     with client:
+        auth.login()
+        assert current_user.username == 'test'
         auth.logout()
-        assert 'user_id' not in session
+        assert current_user.is_anonymous
+
+
+def test_is_safe_url(client):
+    response = client.post(
+            '/auth/login?next=http://www.example.com/',
+        data={'username': 'test', 'password': 'test'}
+    )
+    assert response.status_code == 400

@@ -1,4 +1,4 @@
-from flask import Blueprint, g, redirect, session, url_for
+from flask import Blueprint, g
 from flask_login import LoginManager
 
 from ..models import User
