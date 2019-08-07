@@ -2,6 +2,7 @@ from flask import (
     flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import login_user, logout_user, login_required
 
 from . import bp
 
@@ -50,8 +51,7 @@ def login():
             error = 'Incorrect password.'
 
         if not error:
-            session.clear()
-            session['user_id'] = user.id
+            login_user(user)
             return redirect(url_for('index'))
 
         flash(error)
@@ -60,6 +60,7 @@ def login():
 
 
 @bp.route('/logout')
+@login_required
 def logout():
-    session.clear()
+    logout_user()
     return redirect(url_for('index'))

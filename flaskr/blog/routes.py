@@ -2,10 +2,11 @@ from flask import (
     flash, g, redirect, render_template, request, url_for
 )
 from werkzeug.exceptions import abort
+from flask_login import current_user
 
 from . import bp
 
-from ..auth import login_required
+from flask_login import login_required
 
 from ..models import Post, User
 
@@ -28,7 +29,7 @@ def create():
         if error:
             flash(error)
         else:
-            g.session.add(Post(title=title, body=body, author_id=g.user.id))
+            g.session.add(Post(title=title, body=body, author_id=current_user.id))
             return redirect(url_for('blog.index'))
 
     return render_template('blog/create.html')
@@ -40,7 +41,7 @@ def get_post(id, check_author=True):
     if post is None:
         abort(404, "Post id {} doesn't exist.".format(id))
 
-    if check_author and post.author.id != g.user.id:
+    if check_author and post.author.id != current_user.id:
         abort(403)
 
     return post
