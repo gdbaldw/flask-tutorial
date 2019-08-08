@@ -37,3 +37,4 @@ def test_missing_session(client):
     with client:
         client.get('/')
         g.pop('session', None)
+    #teardown, nothing to assert

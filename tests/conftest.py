@@ -7,6 +7,7 @@ from flaskr import create_app
 from flaskr.models import User, Post
 from data import USERS, POSTS
 
+
 @pytest.fixture
 def app():
     db_fd, db_path = tempfile.mkstemp()
@@ -14,6 +15,7 @@ def app():
     app = create_app({
         'TESTING': True,
         'DATABASE': db_path,
+        'WTF_CSRF_ENABLED': False,
     })
 
     with app.test_client() as client:

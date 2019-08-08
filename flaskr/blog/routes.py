@@ -1,13 +1,10 @@
-from flask import (
-    flash, g, redirect, render_template, request, url_for
-)
+from flask import g, redirect, render_template, url_for
 from werkzeug.exceptions import abort
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from . import bp
 
-from flask_login import login_required
-
+from .forms import PostForm
 from ..models import Post, User
 
 
@@ -20,19 +17,15 @@ def index():
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
-    if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
+    form = PostForm()
 
-        error = None if title else 'Title is required.'
+    if form.validate_on_submit():
+        post = Post(author_id=current_user.id)
+        form.populate_obj(post)
+        g.session.add(post)
+        return redirect(url_for('blog.index'))
 
-        if error:
-            flash(error)
-        else:
-            g.session.add(Post(title=title, body=body, author_id=current_user.id))
-            return redirect(url_for('blog.index'))
-
-    return render_template('blog/create.html')
+    return render_template('blog/create.html', form=form)
 
 
 def get_post(id, check_author=True):
@@ -51,26 +44,26 @@ def get_post(id, check_author=True):
 @login_required
 def update(id):
     post = get_post(id)
+    form = PostForm(obj=post)
 
-    if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        
-        error = None if title else 'Title is required.'
+    if form.delete.data:
+        return redirect(url_for('blog.delete', id=id))
 
-        if error:
-            flash(error)
-        else:
-            post.title = title
-            post.body = body
-            return redirect(url_for('blog.index'))
+    if form.validate_on_submit():
+        form.populate_obj(post)
+        return redirect(url_for('blog.index'))
 
-    return render_template('blog/update.html', post=post)
+    return render_template('blog/update.html', form=form)
 
 
-@bp.route('/<int:id>/delete', methods=('POST',))
+@bp.route('/<int:id>/delete', methods=('GET', 'POST'))
 @login_required
 def delete(id):
     post = get_post(id)
-    g.session.delete(post)
-    return redirect(url_for('blog.index'))
+    form = PostForm(obj=post)
+    
+    if form.delete.data:
+        g.session.delete(post)
+        return redirect(url_for('blog.index'))
+        
+    return render_template('blog/delete.html', form=form)

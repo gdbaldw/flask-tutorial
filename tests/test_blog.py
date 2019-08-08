@@ -63,22 +63,16 @@ def test_update(client, auth, app):
     with client:
         client.post('/1/update', data={'title': 'updated', 'body': ''})
         assert g.session.query(Post).filter_by(id=1).first().title == 'updated'
-
-
-@pytest.mark.parametrize('path', (
-    '/create',
-    '/1/update',
-))
-def test_create_update_validate(client, auth, path):
-    auth.login()
-    response = client.post(path, data={'title': '', 'body': ''})
-    assert b'Title is required.' in response.data
+        response = client.post('/1/update', data={'delete': True})
+    assert response.headers['Location'] == 'http://localhost/1/delete'
 
 
 def test_delete(client, auth, app):
     auth.login()
 
     with client:
-        response = client.post('/1/delete')
+        client.get('/1/delete')
+        assert g.session.query(Post).filter_by(id=1).first()
+        response = client.post('/1/delete', data={'delete': True})
         assert not g.session.query(Post).filter_by(id=1).first()
     assert response.headers['Location'] == 'http://localhost/'

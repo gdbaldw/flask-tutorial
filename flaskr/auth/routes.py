@@ -1,66 +1,49 @@
-from flask import (
-    flash, g, redirect, render_template, request, url_for, abort
-)
-from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import login_user, logout_user, login_required
+from flask import g, redirect, render_template, request, url_for, abort
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash
 from is_safe_url import is_safe_url
 
 from . import bp
 
+from .forms import LoginForm, RegistrationForm
 from ..models import User
 
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        error = None
-
-        if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
-        elif g.session.query(User).filter_by(username=username).first():
-            error = 'User {} is already registered.'.format(username)
-
-        if not error:
-            g.session.add(
-                User(
-                    username=username,
-                    password=generate_password_hash(password)
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        g.session.add(
+            User(
+                username=request.form['username'],
+                password=generate_password_hash(
+                    request.form['password']
                 )
             )
-            return redirect(url_for('auth.login'))
-
-        flash(error)
-    
-    return render_template('auth/register.html')
+        )
+        return redirect(url_for('auth.login'))
+    return render_template('auth/register.html', form=form)
 
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        error = None
-        user = g.session.query(User).filter_by(username=username).first()
-
-        if not user:
-            error = 'Incorrect username.'
-        elif not check_password_hash(user.password, password):
-            error = 'Incorrect password.'
-
-        if not error:
-            login_user(user)
-            url = request.args.get('next', url_for('index'))
-            if not is_safe_url(url, allowed_hosts={''}):
-                return abort(400)
-            return redirect(url)
-
-        flash(error)
-
-    return render_template('auth/login.html')
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        login_user(
+            g.session.query(User).filter_by(
+                username=form.username.data
+            ).first(),
+            remember=form.remember_me.data
+        )
+        url = request.args.get('next', url_for('index'))
+        if not is_safe_url(url, allowed_hosts={''}):
+            return abort(400)
+        return redirect(url)
+    return render_template('auth/login.html', form=form)
 
 
 @bp.route('/logout')

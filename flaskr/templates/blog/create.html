@@ -5,12 +5,13 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post">
-    <label for="title">Title</label>
-    <input name="title" id="title" value="{{ request.form['title'] }}" required>
-    <label for="body">Body</label>
-    <textarea name="body" id="body">{{ request.form['body'] }}</textarea>
-    <input type="submit" value="Save">
-  </form>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.title.label }}
+        {{ form.title }}
+        {{ form.body.label }}
+        {{ form.body }}
+        {{ form.submit() }}
+    </form>
 {% endblock %}
 
