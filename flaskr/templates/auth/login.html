@@ -1,27 +1,26 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Log In{% endblock %}</h1>
+  <link href="{{ url_for('static', filename='css/signin.css') }}" rel="stylesheet">
+  <h1 class="h3 mb-3 font-weight-normal text-center">Please sign in</h1>
 {% endblock %}
 
 {% block content %}
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-	        {{ form.username(size=32) }}<br>
-            {% for error in form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-	        {{ form.password(size=32) }}<br>
-            {% for error in form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit() }}</p>
-    </form>
+  <form class="text-center form-signin" action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.username.label(class="sr-only") }}
+    {{ form.username(class="form-control", placeholder="Username") }}
+    {% for error in form.username.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+    {{ form.password.label(class="sr-only") }}
+    {{ form.password(class="form-control", placeholder="Password") }}
+    {% for error in form.password.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+    <div class="checkbox mb-3">
+      {{ form.remember_me() }} {{ form.remember_me.label }}
+    </div>
+    {{ form.submit(class="btn btn-lg btn-primary btn-block") }}
+  </form>
 {% endblock %}

@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <h1>{% block title %}Please confirm {{ form.delete() }}{% endblock %}</h1>
-    </form>
+  <form action="" method="post">
+    {{ form.hidden_tag() }}
+    <h1>{% block title %}Please confirm {{ form.delete(class="btn btn-warning") }}{% endblock %}</h1>
+  </form>
 {% endblock %}
 
 {% block content %}
-    {{ form.title.label }}
-    <p>{{ form.title.data }}</p>
-    <hr>
-    {{ form.body.label }}
-    <p>{{ form.body.data }}</p>
+  {{ form.title.label }}
+  <p class="border">{{ form.title.data }}</p>
+  <hr>
+  {{ form.body.label }}
+  <p class="border">{{ form.body.data }}</p>
 {% endblock %}

@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}New Post{% endblock %}</h1>
+  <h1>New Post</h1>
 {% endblock %}
 
 {% block content %}
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        {{ form.title.label }}
-        {{ form.title }}
-        {{ form.body.label }}
-        {{ form.body }}
-        {{ form.submit() }}
-    </form>
+  <form action="" method="post" class="form-group">
+    {{ form.hidden_tag() }}
+    {{ form.title.label }}
+    {{ form.title(class="form-control") }}
+    {{ form.body.label }}
+    {{ form.body(class="form-control") }}
+    <br>
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
 {% endblock %}
 

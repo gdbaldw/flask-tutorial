@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 
 
 def create_app(test_config=None):
@@ -16,10 +16,6 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
     
     os.makedirs(app.instance_path, exist_ok=True)
-
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
 
     from . import database
     database.init_app(app)

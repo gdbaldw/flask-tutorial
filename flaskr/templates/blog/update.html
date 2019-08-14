@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Edit "{{ form.title.data }}"{% endblock %}</h1>
+  <h1>Edit "{{ form.title.data }}"</h1>
 {% endblock %}
 
 {% block content %}
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        {{ form.title.label }}
-        {{ form.title }}
-        {{ form.body.label }}
-        {{ form.body }}
-        {{ form.submit() }}
-	    <hr>
-	    {{ form.delete() }}
-    </form>
+  <form action="" method="post" class="form-group">
+    {{ form.hidden_tag() }}
+    {{ form.title.label }}
+    {{ form.title(class="form-control") }}
+    {{ form.body.label }}
+    {{ form.body(class="form-control") }}
+    <br>
+    {{ form.submit(class="btn btn-primary") }}
+    {{ form.delete(class="btn btn-warning") }}
+  </form>
 {% endblock %}
