@@ -1,8 +1,8 @@
 # Flask Tutorial
 
 This implementation of the standard [Flask Tutorial](https://flask.palletsprojects.com/en/1.1.x/tutorial/) is
-stepwise implemented at each GIT commit.
-Further extending the tutorial, [SQLAlchemy](https://docs.sqlalchemy.org/), [Flask-Login](https://flask-login.readthedocs.io), [Flask-WTF](https://flask-wtf.readthedocs.io), and [Bootstrap v4](https://getbootstrap.com/) are all implemented.
+accomplished stepwise at each GIT commit.
+Further extending the tutorial, [SQLAlchemy](https://docs.sqlalchemy.org/), [Flask-Login](https://flask-login.readthedocs.io), [Flask-WTF](https://flask-wtf.readthedocs.io), and [Bootstrap v4](https://getbootstrap.com/) are all added.
 
 The commits are as follows:
 1. [Create .gitignore](https://github.com/gdbaldw/flask-tutorial/commit/7887d00de6d683b8baa5c0126afaad76b0efe235)
@@ -16,7 +16,7 @@ The commits are as follows:
 1. [Rrepackage auth and blog](https://github.com/gdbaldw/flask-tutorial/commit/a023f58cc5bd76d1cce215ae5b51e095b28403e5)
 1. [Implement Flask-Login](https://github.com/gdbaldw/flask-tutorial/commit/cf7cb9332cd4a1eadb6f59d90b71834742128711)
 1. [Cleanup and have login safely redirect to next](https://github.com/gdbaldw/flask-tutorial/commit/a98d2df4764982a938dd86c60089af2a6c89d31c)
-1. [Implement Flask-WFT adn WTForms](https://github.com/gdbaldw/flask-tutorial/commit/7bf35b1e5fdb202ba63788104ec0e827ad4e98bc)
+1. [Implement Flask-WFT and WTForms](https://github.com/gdbaldw/flask-tutorial/commit/7bf35b1e5fdb202ba63788104ec0e827ad4e98bc)
 1. [Implement Bootstrap](https://github.com/gdbaldw/flask-tutorial/commit/fa4ef26d8ea4b9ec94e712cd6bbd7b847fb70b94)
 
 # Deploy final application
